@@ -312,8 +312,8 @@ function draw() {
     let bgColors = getTemperatureColors(currentTemp);
 
     // 시간대 효과 (낮/밤 구분)
-    let hour = hour();
-    let isNight = hour < 6 || hour > 18;
+    let currentHour = hour();
+    let isNight = currentHour < 6 || currentHour > 18;
 
     if (isNight) {
         // 밤 하늘
