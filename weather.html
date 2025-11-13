@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seoul Weather Graphics - 서울 날씨 반응형 그래픽</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Arial', sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(100, 200, 255, 0.5);
+            z-index: 1000;
+        }
+        .controls h3 {
+            margin: 0 0 15px 0;
+            color: #64c8ff;
+            text-align: center;
+            font-size: 18px;
+        }
+        .control-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .control-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .control-btn.demo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .control-btn.refresh {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .info-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .weather-types {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            z-index: 1000;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+        }
+        .weather-type {
+            color: white;
+            font-size: 13px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .weather-type:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        .api-notice {
+            position: absolute;
+            bottom: 220px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 150, 0, 0.9);
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            max-width: 600px;
+            z-index: 999;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 25px;
+            height: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-types">
+        <div class="weather-type">☀️ 맑음</div>
+        <div class="weather-type">☁️ 흐림</div>
+        <div class="weather-type">🌧️ 비</div>
+        <div class="weather-type">⛈️ 뇌우</div>
+        <div class="weather-type">❄️ 눈</div>
+        <div class="weather-type">🌫️ 안개</div>
+        <div class="weather-type">💨 먼지</div>
+        <div class="weather-type">🌡️ 온도별 색상</div>
+    </div>
+
+    <div class="api-notice" id="apiNotice">
+        <button class="close-btn" onclick="document.getElementById('apiNotice').style.display='none'">×</button>
+        <strong>📢 안내</strong><br>
+        현재 데모 모드로 실행 중입니다. 실제 서울 날씨를 보려면 OpenWeatherMap API 키가 필요합니다.<br>
+        <small>weather.js 파일에서 API_KEY를 설정하세요 (무료: <a href="https://openweathermap.org/api" target="_blank" style="color: #ffff00;">openweathermap.org</a>)</small>
+    </div>
+
+    <div class="controls">
+        <h3>🎮 컨트롤</h3>
+
+        <div class="control-row">
+            <button class="control-btn refresh" onclick="location.reload()">
+                🔄 실시간 날씨 가져오기
+            </button>
+            <button class="control-btn demo" onclick="changeWeather()">
+                🎲 랜덤 날씨 체험
+            </button>
+        </div>
+
+        <div class="info-text">
+            💡 클릭: 즉시 업데이트 | 스페이스바: 랜덤 날씨 | R: 새로고침<br>
+            ⏰ 10분마다 자동으로 실제 날씨 업데이트
+        </div>
+    </div>
+
+    <script src="weather.js"></script>
+    <script>
+        function changeWeather() {
+            // p5.js의 generateDemoWeather 호출
+            if (typeof generateDemoWeather === 'function') {
+                generateDemoWeather();
+            }
+        }
+    </script>
+</body>
+</html>
