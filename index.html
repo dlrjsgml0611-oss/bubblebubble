@@ -18,19 +18,108 @@
         .info {
             position: absolute;
             top: 20px;
-            left: 20px;
+            right: 20px;
             color: white;
             font-family: 'Arial', sans-serif;
-            font-size: 14px;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            font-size: 13px;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
             z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            max-width: 300px;
+            line-height: 1.6;
+        }
+        .info h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #00ffff;
+        }
+        .info .section {
+            margin-bottom: 12px;
+        }
+        .info .section-title {
+            font-weight: bold;
+            color: #ffff00;
+            margin-bottom: 5px;
+        }
+        .info kbd {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 0 2px;
+        }
+        .toggle-help {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid #00ffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+        }
+        .toggle-help:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.05);
+        }
+        .info.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+    <button class="toggle-help" onclick="document.querySelector('.info').classList.toggle('hidden')">
+        ❓ 도움말
+    </button>
+
     <div class="info">
-        🎨 마우스를 움직여보세요! | 클릭하면 폭발! | R키로 리셋
+        <h3>🎮 조작법</h3>
+
+        <div class="section">
+            <div class="section-title">🖱️ 마우스</div>
+            • 이동: 버블이 따라옵니다<br>
+            • 클릭: 폭발 효과 생성<br>
+            • 드래그: 파티클 트레일
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎨 모드 선택 (숫자 키)</div>
+            <kbd>1</kbd> 노말 모드<br>
+            <kbd>2</kbd> 폭죽 모드 🎆<br>
+            <kbd>3</kbd> 중력 모드 🌍<br>
+            <kbd>4</kbd> 반발 모드 ⚡<br>
+            <kbd>5</kbd> 카오스 모드 🌀<br>
+            <kbd>6</kbd> 블랙홀 모드 🕳️<br>
+            <kbd>7</kbd> 레인보우 모드 🌈
+        </div>
+
+        <div class="section">
+            <div class="section-title">⚡ 특수 기능</div>
+            <kbd>스페이스</kbd> 메가 폭발<br>
+            <kbd>T</kbd> 트레일 효과 ON/OFF<br>
+            <kbd>M</kbd> 버블 20개 추가<br>
+            <kbd>E</kbd> 모든 버블 폭발<br>
+            <kbd>R</kbd> 리셋
+        </div>
+
+        <div class="section">
+            <div class="section-title">✨ 파워업 아이템</div>
+            🧲 자석 - 모든 버블 끌어당김<br>
+            🌈 레인보우 - 색상 고속 변화<br>
+            💣 폭발 - 모든 버블 터짐<br>
+            ✨ 증식 - 버블 2배로 증가
+        </div>
     </div>
+
     <script src="sketch.js"></script>
 </body>
 </html>
